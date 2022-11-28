@@ -7,6 +7,8 @@ const userRoute = require('./routes/users');
 const authRoute = require('./routes/auth');
 const app = express();
 
+dotenv.config();
+
 mongoose.connect(
   process.env.MONGO_URL,
   { useNewUrlParser: true, useUnifiedTopology: true },
