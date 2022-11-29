@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const User = require('../models/Users');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 //register user
 router.post('/register', async (req, res) => {
@@ -29,8 +30,24 @@ router.post('/login', async (req, res) => {
 
     !isVallid && res.status(400).json('authentication error');
 
-    if (isVallid) {
-      res.status(200).json('authentication success');
+    try {
+      if (isVallid) {
+        let token = jwt.sign(
+          {
+            username: user.username,
+            userId: user._id,
+          },
+          process.env.JWT_KEY,
+          {
+            expiresIn: '3d',
+          }
+        );
+        res
+          .status(200)
+          .json({ 'access token': token, message: 'login successful' });
+      }
+    } catch (error) {
+      res.send(error);
     }
   } catch (error) {
     res.json(error);
